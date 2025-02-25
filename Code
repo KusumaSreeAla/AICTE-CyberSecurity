@@ -1,0 +1,73 @@
+from google.colab import files
+uploaded = files.upload()
+
+import cv2
+import numpy as np
+
+img = cv2.imread("Elephant.jpg")
+
+if img is None:
+    print("Error: Image not loaded! Check the file name and path.")
+else:
+    print("Image loaded successfully!")
+
+
+
+import cv2
+import numpy as np
+from google.colab.patches import cv2_imshow
+
+# Read image again (ensure it exists)
+img = cv2.imread("Elephant.jpg")
+
+# Verify image loaded
+if img is None:
+    raise ValueError("Image not found. Please check file name and upload again.")
+
+# Get message and password from user
+msg = input("Enter secret message: ")
+password = input("Enter a passcode: ")
+
+# ASCII Mapping for Encryption
+d = {chr(i): i for i in range(256)}
+c = {i: chr(i) for i in range(256)}
+
+# Encrypt message into image pixels
+m, n, z = 0, 0, 0
+for i in range(len(msg)):
+    img[n, m, z] = d[msg[i]]  # Store ASCII value
+    m = (m + 1) % img.shape[1]  # Move horizontally
+    if m == 0:
+        n = (n + 1) % img.shape[0]  # Move to next row
+    z = (z + 1) % 3  # Cycle through BGR channels
+
+# Save and display encrypted image
+cv2.imwrite("encryptedImage.jpg", img)
+cv2_imshow(img)
+print("Encryption complete. Image saved as 'encryptedImage.jpg'.")
+
+
+
+from google.colab import files
+files.download("encryptedImage.jpg")
+
+
+
+
+
+# Decryption Process
+message = ""
+m, n, z = 0, 0, 0
+
+pas = input("Enter passcode for Decryption: ")
+if password == pas:
+    for i in range(len(msg)):  # Same length as encrypted message
+        message += c[img[n, m, z]]  # Convert back to characters
+        m = (m + 1) % img.shape[1]
+        if m == 0:
+            n = (n + 1) % img.shape[0]
+        z = (z + 1) % 3
+
+    print("Decryption message:", message)
+else:
+    print("YOU ARE NOT AUTHORIZED")
